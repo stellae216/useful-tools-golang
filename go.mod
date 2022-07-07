@@ -1,3 +1,3 @@
-module useful_tools
+module useful-tools-golang
 
 go 1.18

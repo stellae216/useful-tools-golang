@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"useful-tools-golang/application"
+)
 
 func main() {
-	fmt.Println("hello world!")
+	application.EditFileNameByModifyTime()
 }
