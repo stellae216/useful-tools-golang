@@ -61,7 +61,7 @@ func EditFileNameServRun() {
 	}
 }
 
-// EditFileNameByModifyTime 根据文件修改时间批量修改文件名称
+// EditFileNameByModifyTime 根据文件修改时间批量修改文件名称，格式:yyyymmdd_hhmmss_xxx.suffix
 func EditFileNameByModifyTime(idx int, fPath string, wg *sync.WaitGroup) {
 	fileInfo, err := os.Stat(fPath)
 	defer func() {
