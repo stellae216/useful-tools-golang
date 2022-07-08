@@ -39,7 +39,8 @@ func EditFileNameByModifyTime() {
 			return
 		}
 		// 根据文件最后修改时间命名
-		_, lastWriteTime, _ := GetFileTimeAttributeForWindows(fileInfo)
+		//_, lastWriteTime, _ := GetFileTimeAttributeForWindows(fileInfo)
+		_, lastWriteTime, _ := GetFileTimeAttribute(fileInfo)
 		splitStr := strings.Split(fPath, ".")
 		if len(splitStr) <= 1 {
 			fmt.Printf("不支持文件格式：%s", fPath)
@@ -56,20 +57,16 @@ func EditFileNameByModifyTime() {
 	}
 }
 
-// GetFileTimeAttributeForWindows 获取windows文件时间属性：创建时间、最后修改时间、最后访问时间
-func GetFileTimeAttributeForWindows(fileInfo os.FileInfo) (ct, lwt, lat time.Time) {
-	winFileAttr := fileInfo.Sys().(*syscall.Win32FileAttributeData)
-	ct = utils.SecondToTime(winFileAttr.CreationTime.Nanoseconds() / 1e9)
-	lwt = utils.SecondToTime(winFileAttr.LastWriteTime.Nanoseconds() / 1e9)
-	lat = utils.SecondToTime(winFileAttr.LastAccessTime.Nanoseconds() / 1e9)
+// GetFileTimeAttribute 获取文件时间属性：创建时间、最后修改时间、最后访问时间
+func GetFileTimeAttribute(fileInfo os.FileInfo) (ct, lwt, lat time.Time) {
+	//// windows
+	//winFileAttr := fileInfo.Sys().(*syscall.Win32FileAttributeData)
+	//ct = utils.SecondToTime(winFileAttr.CreationTime.Nanoseconds() / 1e9)
+	//lwt = utils.SecondToTime(winFileAttr.LastWriteTime.Nanoseconds() / 1e9)
+	//lat = utils.SecondToTime(winFileAttr.LastAccessTime.Nanoseconds() / 1e9)
+	linuxFileAttr := fileInfo.Sys().(*syscall.Stat_t)
+	ct = utils.SecondToTime(linuxFileAttr.Ctimespec.Sec)
+	lwt = utils.SecondToTime(linuxFileAttr.Mtimespec.Sec)
+	lat = utils.SecondToTime(linuxFileAttr.Atimespec.Sec)
 	return
 }
-
-//
-//func GetFileTimeAttributeForLinux(path string) error {
-//	fileInfo, _ := os.Stat(path)
-//	linuxFileAttr := fileInfo.Sys().(*syscall.Stat_t)
-//	fmt.Println("文件创建时间", SecondToTime(linuxFileAttr.Ctim.Sec))
-//	fmt.Println("最后访问时间", SecondToTime(linuxFileAttr.Atim.Sec))
-//	fmt.Println("最后修改时间", SecondToTime(linuxFileAttr.Mtim.Sec))
-//}
