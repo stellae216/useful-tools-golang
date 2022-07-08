@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	application.EditFileNameByModifyTime()
+	application.EditFileNameServRun()
 }

@@ -1,7 +1,8 @@
 package application
 
 import (
-	"flag"
+	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,17 +13,13 @@ import (
 	"useful-tools-golang/common/utils"
 )
 
-var dirPath string
-
-func init() {
-	flag.StringVar(&dirPath, "dir", "", "Input your file dir path")
-}
-
-// EditFileNameByModifyTime 根据文件修改时间批量修改文件名称
-func EditFileNameByModifyTime() {
-	flag.Parse()
+func EditFileNameServRun() {
+	scanner := bufio.NewScanner(os.Stdin)
+	fmt.Print("please input dir path: ")
+	scanner.Scan()
+	dirPath := scanner.Text()
 	if dirPath == "" {
-		fmt.Println("please input dir path.")
+		fmt.Println("input not allowed to be empty!")
 		return
 	}
 	fileList, err := utils.GetAllFile(dirPath)
@@ -30,31 +27,38 @@ func EditFileNameByModifyTime() {
 		fmt.Println("读取文件夹数据失败：", err)
 		return
 	}
+	if err = EditFileNameByModifyTime(dirPath, fileList); err != nil {
+		fmt.Println("err：", err)
+		return
+	}
+	fmt.Println("Done.")
+}
+
+// EditFileNameByModifyTime 根据文件修改时间批量修改文件名称
+func EditFileNameByModifyTime(dirPath string, fileList []string) error {
 	// todo 多线程处理任务
 	for idx, fPath := range fileList {
 		fmt.Printf("[%d] %s\n", idx, fPath)
 		fileInfo, err := os.Stat(fPath)
 		if err != nil {
-			fmt.Printf("读取文件%s失败：%s", fPath, err.Error())
-			return
+			return errors.New(fmt.Sprintf("读取文件%s失败：%s", fPath, err.Error()))
 		}
 		// 根据文件最后修改时间命名
 		//_, lastWriteTime, _ := GetFileTimeAttributeForWindows(fileInfo)
 		_, lastWriteTime, _ := GetFileTimeAttribute(fileInfo)
 		splitStr := strings.Split(fPath, ".")
 		if len(splitStr) <= 1 {
-			fmt.Printf("不支持文件格式：%s", fPath)
-			return
+			return errors.New(fmt.Sprintf("不支持文件格式：%s", fPath))
 		}
 		suffix := splitStr[len(splitStr)-1]
 		filename := fmt.Sprintf("%s_%s.%s", lastWriteTime.Format("20060102_150304"), utils.GetRandomUpperString(4), suffix)
 		newFilePath := filepath.Join(dirPath, filename)
 		if err = os.Rename(fPath, newFilePath); err != nil {
-			fmt.Println("修改文件名失败：", err.Error())
-			return
+			return errors.New(fmt.Sprintf("修改文件名失败：", err.Error()))
 		}
 		fmt.Println("=>", newFilePath)
 	}
+	return nil
 }
 
 // GetFileTimeAttribute 获取文件时间属性：创建时间、最后修改时间、最后访问时间
