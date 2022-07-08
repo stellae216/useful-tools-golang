@@ -18,6 +18,8 @@ import (
 var (
 	dirPath         string
 	taskNumber      int
+	successNumber   int
+	failedNumber    int
 	processTaskChan chan int
 	errTaskList     []string
 	mutex           sync.Mutex
@@ -28,14 +30,14 @@ func EditFileNameServRun() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("please input dir path: ")
 	scanner.Scan()
-	dirPath = scanner.Text()
+	dirPath = strings.Trim(scanner.Text(), " ")
 	if dirPath == "" {
 		fmt.Println("input not allowed to be empty!")
 		return
 	}
 	fmt.Print("please input task number(1-100): ")
 	scanner.Scan()
-	taskNumber, err = strconv.Atoi(scanner.Text())
+	taskNumber, err = strconv.Atoi(strings.Trim(scanner.Text(), " "))
 	if err != nil || taskNumber > 100 || taskNumber < 1 {
 		fmt.Println("task number error!")
 		return
@@ -53,18 +55,24 @@ func EditFileNameServRun() {
 		go EditFileNameByModifyTime(idx, fPath, &wg)
 	}
 	wg.Wait()
-	fmt.Println("Done.")
+	fmt.Printf("Rename file Done. task number %d, success %d, failed %d", len(fileList), successNumber, failedNumber)
+	if len(errTaskList) > 0 {
+		fmt.Printf(fmt.Sprintf("修改失败文件：\n%s", strings.Join(errTaskList, "\n")))
+	}
 }
 
 // EditFileNameByModifyTime 根据文件修改时间批量修改文件名称
 func EditFileNameByModifyTime(idx int, fPath string, wg *sync.WaitGroup) {
 	fileInfo, err := os.Stat(fPath)
 	defer func() {
+		mutex.Lock()
 		if err != nil {
-			mutex.Lock()
 			errTaskList = append(errTaskList, fPath)
-			mutex.Unlock()
+			failedNumber = failedNumber + 1
+		} else {
+			successNumber = successNumber + 1
 		}
+		mutex.Unlock()
 		<-processTaskChan
 		wg.Done()
 	}()
