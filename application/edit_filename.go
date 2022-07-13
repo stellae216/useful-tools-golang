@@ -101,14 +101,15 @@ func EditFileNameByModifyTime(idx int, fPath string, wg *sync.WaitGroup) {
 
 // GetFileTimeAttribute 获取文件时间属性：创建时间、最后修改时间、最后访问时间
 func GetFileTimeAttribute(fileInfo os.FileInfo) (ct, lwt, lat time.Time) {
-	//// windows
-	//winFileAttr := fileInfo.Sys().(*syscall.Win32FileAttributeData)
-	//ct = utils.SecondToTime(winFileAttr.CreationTime.Nanoseconds() / 1e9)
-	//lwt = utils.SecondToTime(winFileAttr.LastWriteTime.Nanoseconds() / 1e9)
-	//lat = utils.SecondToTime(winFileAttr.LastAccessTime.Nanoseconds() / 1e9)
-	linuxFileAttr := fileInfo.Sys().(*syscall.Stat_t)
-	ct = utils.SecondToTime(linuxFileAttr.Ctimespec.Sec)
-	lwt = utils.SecondToTime(linuxFileAttr.Mtimespec.Sec)
-	lat = utils.SecondToTime(linuxFileAttr.Atimespec.Sec)
+	// windows
+	winFileAttr := fileInfo.Sys().(*syscall.Win32FileAttributeData)
+	ct = utils.SecondToTime(winFileAttr.CreationTime.Nanoseconds() / 1e9)
+	lwt = utils.SecondToTime(winFileAttr.LastWriteTime.Nanoseconds() / 1e9)
+	lat = utils.SecondToTime(winFileAttr.LastAccessTime.Nanoseconds() / 1e9)
+	// linux and mac
+	//linuxFileAttr := fileInfo.Sys().(*syscall.Stat_t)
+	//ct = utils.SecondToTime(linuxFileAttr.Ctimespec.Sec)
+	//lwt = utils.SecondToTime(linuxFileAttr.Mtimespec.Sec)
+	//lat = utils.SecondToTime(linuxFileAttr.Atimespec.Sec)
 	return
 }
