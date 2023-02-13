@@ -1,9 +1,12 @@
 package main
 
 import (
-	"useful-tools-golang/application"
+	"fmt"
+	"time"
 )
 
 func main() {
-	application.EditFileNameServRun()
+	location, _ := time.LoadLocation("Asia/Shanghai")
+	date := time.Date(2022, 1, 1, 0, 0, 0, 0, location)
+	fmt.Println(date.Unix())
 }
