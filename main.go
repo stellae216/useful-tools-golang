@@ -10,7 +10,7 @@ import (
 
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Print("请输入chatGPT token: ")
+	fmt.Print("please input chatGPT token: ")
 	scanner.Scan()
 	token := strings.Trim(scanner.Text(), " ")
 	gptClient := application.GenClient(token)
@@ -29,7 +29,7 @@ func main() {
 			fmt.Printf("Error: %v\n", err)
 			break
 		}
-		fmt.Printf("[%d] reply: %s\n", i, reply)
+		fmt.Printf("[%d] reply -> \n%s\n", i, reply)
 	}
 	fmt.Println("finish...")
 }
