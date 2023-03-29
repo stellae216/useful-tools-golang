@@ -13,7 +13,9 @@ func main() {
 	fmt.Print("please input chatGPT token: ")
 	scanner.Scan()
 	token := strings.Trim(scanner.Text(), " ")
-	gptClient := application.GenClient(token)
+	var gptClient = application.GenClientWithProxy(token, application.ProxyGPT{
+		Protocol: "http", Addr: "127.0.0.1", Port: "7890",
+	})
 	fmt.Println("========================================")
 	fmt.Println("Please start chatting, to exit please enter:【exit】!")
 	for i := 1; true; i = i + 1 {

@@ -2,8 +2,17 @@ package application
 
 import (
 	"context"
+	"fmt"
 	openai "github.com/sashabaranov/go-openai"
+	"net/http"
+	"net/url"
 )
+
+type ProxyGPT struct {
+	Protocol string
+	Addr     string
+	Port     string
+}
 
 type chatGPT3 struct {
 	client          *openai.Client
@@ -13,6 +22,24 @@ type chatGPT3 struct {
 func GenClient(token string) *chatGPT3 {
 	return &chatGPT3{
 		client:          openai.NewClient(token),
+		contextMessages: make([]openai.ChatCompletionMessage, 0),
+	}
+}
+
+func GenClientWithProxy(token string, p ProxyGPT) *chatGPT3 {
+	config := openai.DefaultConfig(token)
+	proxyURL, err := url.Parse(fmt.Sprintf("%s://%s:%s", p.Protocol, p.Addr, p.Port))
+	if err != nil {
+		panic(err)
+	}
+	transport := &http.Transport{
+		Proxy: http.ProxyURL(proxyURL),
+	}
+	config.HTTPClient = &http.Client{
+		Transport: transport,
+	}
+	return &chatGPT3{
+		client:          openai.NewClientWithConfig(config),
 		contextMessages: make([]openai.ChatCompletionMessage, 0),
 	}
 }
