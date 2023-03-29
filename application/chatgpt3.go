@@ -1,9 +1,12 @@
 package application
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	openai "github.com/sashabaranov/go-openai"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -86,4 +89,45 @@ func (gpt3 *chatGPT3) SendMessagesWithContext(message string) (reply string, err
 		Content: reply,
 	})
 	return reply, nil
+}
+
+// SendMessageStream send a completion message stream
+func (gpt3 *chatGPT3) SendMessageStream(message string) (reply string, err error) {
+	stream, err := gpt3.client.CreateChatCompletionStream(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model:     openai.GPT3Dot5Turbo,
+			MaxTokens: 20,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: message,
+				},
+			},
+		},
+	)
+	if err != nil {
+		return "", err
+	}
+	return _printStream(stream)
+}
+
+// _printStream print stream resp content
+func _printStream(stream *openai.ChatCompletionStream) (reply string, err error) {
+	var buffer bytes.Buffer
+	defer stream.Close()
+	for {
+		response, err := stream.Recv()
+		if errors.Is(err, io.EOF) {
+			break
+		}
+		if err != nil {
+			return "", err
+		}
+		tmp := response.Choices[0].Delta.Content
+		fmt.Printf(tmp)
+		buffer.WriteString(tmp)
+	}
+	fmt.Println()
+	return buffer.String(), nil
 }

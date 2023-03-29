@@ -13,9 +13,7 @@ func main() {
 	fmt.Print("please input chatGPT token: ")
 	scanner.Scan()
 	token := strings.Trim(scanner.Text(), " ")
-	var gptClient = application.GenClientWithProxy(token, application.ProxyGPT{
-		Protocol: "http", Addr: "127.0.0.1", Port: "7890",
-	})
+	gptClient := application.GenClient(token)
 	fmt.Println("========================================")
 	fmt.Println("Please start chatting, to exit please enter:【exit】!")
 	for i := 1; true; i = i + 1 {
@@ -26,12 +24,12 @@ func main() {
 		if message == "exit" {
 			break
 		}
-		reply, err := gptClient.SendMessagesWithContext(message)
+		fmt.Printf("[%d] reply -> \n", i)
+		_, err := gptClient.SendMessageStream(message)
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			break
 		}
-		fmt.Printf("[%d] reply -> \n%s\n", i, reply)
 	}
 	fmt.Println("finish...")
 }
