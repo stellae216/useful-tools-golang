@@ -3,7 +3,7 @@
 打包说明
 ```shell
 # mac os build .exe file
-
+CGO_ENABLED=0  GOOS=windows  GOARCH=amd64 go build main.go
 ```
 
 #### 根据文件修改时间，批量更新指定目录下文件名称
