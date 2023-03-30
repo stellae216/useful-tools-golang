@@ -5,10 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	openai "github.com/sashabaranov/go-openai"
 	"io"
 	"net/http"
 	"net/url"
+
+	openai "github.com/sashabaranov/go-openai"
 )
 
 type ProxyGPT struct {

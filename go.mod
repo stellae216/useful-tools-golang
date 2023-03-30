@@ -1,4 +1,4 @@
-module useful-tools-golang
+module github.com/stellae216/useful-tools-golang
 
 go 1.19
 

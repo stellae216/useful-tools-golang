@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"useful-tools-golang/application"
+
+	"github.com/stellae216/useful-tools-golang/application"
 )
 
 func main() {

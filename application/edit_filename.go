@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"useful-tools-golang/common/utils"
+	"github.com/stellae216/useful-tools-golang/common/utils"
 )
 
 var (

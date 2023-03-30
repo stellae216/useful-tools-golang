@@ -3,7 +3,8 @@ package unit
 import (
 	"sync"
 	"testing"
-	"useful-tools-golang/application"
+
+	"github.com/stellae216/useful-tools-golang/application"
 )
 
 func TestSnowflake(t *testing.T) {

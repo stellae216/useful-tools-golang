@@ -6,7 +6,8 @@ import (
 	"os"
 	"strings"
 	"testing"
-	"useful-tools-golang/application"
+
+	"github.com/stellae216/useful-tools-golang/application"
 )
 
 /*
