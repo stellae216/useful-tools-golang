@@ -4,7 +4,7 @@
 打包命令:
 ```shell
 # mac os build .exe file
-CGO_ENABLED=0  GOOS=windows  GOARCH=amd64 go build main.go
+CGO_ENABLED=0  GOOS=windows  GOARCH=amd64 go build edit_filename.go
 ```
 > 参数说明：
 > - CGO_ENABLED : CGO 表示golang中的工具，CGO_ENABLED 表示CGO禁用，交叉编译中不能使用CGO的

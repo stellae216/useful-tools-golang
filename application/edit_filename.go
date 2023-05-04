@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/stellae216/useful-tools-golang/common/utils"
@@ -106,9 +107,9 @@ func GetFileTimeAttribute(fileInfo os.FileInfo) (ct, lwt, lat time.Time) {
 	//lwt = utils.SecondToTime(winFileAttr.LastWriteTime.Nanoseconds() / 1e9)
 	//lat = utils.SecondToTime(winFileAttr.LastAccessTime.Nanoseconds() / 1e9)
 	// linux and mac
-	//linuxFileAttr := fileInfo.Sys().(*syscall.Stat_t)
-	//ct = utils.SecondToTime(linuxFileAttr.Ctimespec.Sec)
-	//lwt = utils.SecondToTime(linuxFileAttr.Mtimespec.Sec)
-	//lat = utils.SecondToTime(linuxFileAttr.Atimespec.Sec)
+	linuxFileAttr := fileInfo.Sys().(*syscall.Stat_t)
+	ct = utils.SecondToTime(linuxFileAttr.Ctimespec.Sec)
+	lwt = utils.SecondToTime(linuxFileAttr.Mtimespec.Sec)
+	lat = utils.SecondToTime(linuxFileAttr.Atimespec.Sec)
 	return
 }
